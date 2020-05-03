@@ -1,6 +1,20 @@
+---
+title: "Simulation Result"
+author: "Zhao delin"
+date: "2020/5/3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
 source("ncv_cd.R")
 source("cv_ncv_cd.R")
+```
 
+```{r}
 n <- 500
 p <- 1000
 p_eff <- 10
@@ -8,13 +22,19 @@ X <- matrix(rnorm(n*p, 0, 1),nrow = n)
 epsilon <- rnorm(n, 0, 1)
 beta <- c(runif(p_eff, 1, 2),rep(0, p-p_eff))
 y <- X%*%beta + epsilon
+```
 
+```{r}
 mod_lasso <- ncv_cd(X, y, family = "gaussian", penalty = "lasso", plot = TRUE)
 mod_MCP <- ncv_cd(X, y, family = "gaussian", penalty = "MCP", plot = TRUE)
 mod_SCAD <- ncv_cd(X, y, family = "gaussian", penalty = "SCAD", plot = TRUE)
+```
 
+```{r}
 mod_MCP2 <- ncv_cd(X, y, family = "gaussian", penalty = "MCP", plot = TRUE, gamma = 1.2)
+```
 
+```{r}
 lasso_cv <- cv_ncv_cd(X, y, family = "gaussian", penalty = "lasso")
 norm(lasso_cv$beta_cv-beta,"2")
 table(pred=(lasso_cv$beta_cv!=0), true=(beta!=0))
@@ -24,6 +44,5 @@ table(pred=(MCP_cv$beta_cv!=0), true=(beta!=0))
 SCAD_cv <- cv_ncv_cd(X, y, family = "gaussian", penalty = "SCAD")
 norm(SCAD_cv$beta_cv-beta,"2")
 table(pred=(SCAD_cv$beta_cv!=0), true=(beta!=0))
+```
 
-mod <- ncvreg(X, y, family = "gaussian", penalty = "lasso")
-plot(mod)
