@@ -20,12 +20,11 @@ SCAD <- function(z, lambda, gamma){
   }
 }
 
-ncv_cd <- function(X, y, family=c("gaussian", "binomial"), lambda.min, lambda, nlambda=100, penalty=c("MCP", "SCAD", "lasso"), gamma=switch(penalty, SCAD=3.7, MCP=3), plot = FALSE){
+ncv_cd <- function(X, y, lambda.min, lambda, nlambda=100, penalty=c("MCP", "SCAD", "lasso"), gamma=switch(penalty, SCAD=3.7, MCP=3), plot = FALSE, eps=1e-4){
   X <- scale(X)
   y <- scale(y, scale = FALSE)
   n <- nrow(X)
   p <- ncol(X)
-  epsilon <- 1e-4*sqrt(p)
   if(missing(lambda)){
     if(missing(lambda.min)){
       lambda.min <- ifelse(n>p, .001, .05)
@@ -52,7 +51,7 @@ ncv_cd <- function(X, y, family=c("gaussian", "binomial"), lambda.min, lambda, n
           r <- r - (beta_new[j]-beta[j])*X[, j]
         }
         t <- t + 1
-        if(norm(beta_new-beta,"2")<epsilon){break}
+        if(norm(beta_new-beta,"2")<eps){break}
         beta <- beta_new
       }
       beta_lambda[, i] <- beta
@@ -69,7 +68,7 @@ ncv_cd <- function(X, y, family=c("gaussian", "binomial"), lambda.min, lambda, n
           r <- r - (beta_new[j]-beta[j])*X[, j]
         }
         t <- t + 1
-        if(norm(beta_new-beta,"2")<epsilon){break}
+        if(norm(beta_new-beta,"2")<eps){break}
         beta <- beta_new
       }
       beta_lambda[, i] <- beta
